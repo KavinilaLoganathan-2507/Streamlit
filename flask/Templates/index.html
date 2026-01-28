@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask CRUD - Student Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="page">
+        <header class="hero">
+            <p class="eyebrow">Flask CRUD Demo</p>
+            <h1>Student Management</h1>
+            <p class="lede">Add, update, and remove students in one quick table. All in-memory to keep the lesson simple.</p>
+        </header>
+
+        <!-- CREATE - Add New Student -->
+        <section class="card add-card">
+            <div class="card-header">
+                <h2>Add New Student</h2>
+                <p class="muted">Use the form to add a name and age.</p>
+            </div>
+            <form class="add-form" action="{{ url_for('add_student') }}" method="POST">
+                <div class="form-row">
+                    <input type="text" name="name" placeholder="Student Name" required>
+                    <input type="number" name="age" placeholder="Age" min="1" required>
+                    <button type="submit" class="btn primary">Add</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- READ/UPDATE/DELETE - Display All Students -->
+        <section class="card table-card">
+            <div class="card-header">
+                <h2>Student List</h2>
+                <p class="muted">Edit inline or delete with confirmation.</p>
+            </div>
+
+            {% if students %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th class="actions-col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>
+                                <input type="text" name="name" value="{{ student.name }}" form="update-{{ student.id }}" required>
+                            </td>
+                            <td>
+                                <input type="number" name="age" value="{{ student.age }}" form="update-{{ student.id }}" min="1" required>
+                            </td>
+                            <td class="actions">
+                                <form id="update-{{ student.id }}" class="update-form" action="{{ url_for('update_student', student_id=student.id) }}" method="POST">
+                                    <button class="btn success" type="submit">Update</button>
+                                </form>
+                                <button type="button" class="btn danger delete-btn" data-delete-url="{{ url_for('delete_student', student_id=student.id) }}">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="empty">No students yet. Add your first student above!</p>
+            {% endif %}
+        </section>
+    </div>
+
+</body>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</html>
